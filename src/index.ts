@@ -1,9 +1,15 @@
-export const toArabic = (romanNumber: string): number => {
-  const ROMAN_TO_ARABIC: { [key: string]: number } = {
-    I: 1,
-  };
+type AllowedRomanNumbers = 'I' | 'V';
+const ROMAN_TO_ARABIC: Record<AllowedRomanNumbers, number> = {
+  I: 1,
+  V: 5,
+};
 
-  return romanNumber.split('').reduce((acc: number, letter: string) => {
-    return acc + ROMAN_TO_ARABIC[letter];
-  }, 0);
+export const toArabic = (romanNumber: string): number => {
+  return romanNumber
+    .split('')
+    .reduce((acc: number, letter: AllowedRomanNumbers) => {
+      const currentValue = ROMAN_TO_ARABIC[letter];
+
+      return acc + currentValue;
+    }, 0);
 };
