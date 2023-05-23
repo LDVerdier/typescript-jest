@@ -1,1 +1,3 @@
-export const add = (a: number, b: number) => a + b;
+export const toArabic = (romanNumber: string): number => {
+  return 1;
+};

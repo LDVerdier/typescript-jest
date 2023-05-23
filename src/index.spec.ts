@@ -1,5 +1,8 @@
-import { add } from './index';
+import { toArabic } from './index';
 
-test('adds 1 + 2 to equal 3', () => {
-  expect(add(1, 2)).toBe(3);
-});
+test.each([{ romanNumber: 'I', expected: 1 }])(
+  'convert roman to arabic',
+  ({ romanNumber, expected }) => {
+    expect(toArabic(romanNumber)).toBe(expected);
+  },
+);
