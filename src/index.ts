@@ -1,7 +1,8 @@
-type AllowedRomanNumbers = 'I' | 'V';
+type AllowedRomanNumbers = 'I' | 'V' | 'X';
 const ROMAN_TO_ARABIC: Record<AllowedRomanNumbers, number> = {
   I: 1,
   V: 5,
+  X: 10,
 };
 
 export const toArabic = (romanNumber: string): number => {
@@ -17,7 +18,7 @@ export const toArabic = (romanNumber: string): number => {
         const currentValue = ROMAN_TO_ARABIC[letter];
         const nextLetter = letters[letterIndex + 1];
 
-        if (`${letter}${nextLetter}` === 'IV') {
+        if (['IV', 'IX'].includes(`${letter}${nextLetter}`)) {
           return acc - currentValue;
         }
 
