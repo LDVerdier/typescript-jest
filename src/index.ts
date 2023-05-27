@@ -21,7 +21,7 @@ export const toArabic = (romanNumber: string): number => {
         const currentValue = ROMAN_TO_ARABIC[letter];
         const nextLetter = letters[letterIndex + 1];
 
-        if (['IV', 'IX', 'XL', 'XC'].includes(`${letter}${nextLetter}`)) {
+        if (['IV', 'IX', 'XL', 'XC', 'CD'].includes(`${letter}${nextLetter}`)) {
           return acc - currentValue;
         }
 
