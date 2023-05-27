@@ -27,6 +27,7 @@ test.each([
   { romanNumber: 'CD', expected: 400 },
   { romanNumber: 'CDXLIX', expected: 449 },
   { romanNumber: 'D', expected: 500 },
+  { romanNumber: 'CM', expected: 900 },
   { romanNumber: 'M', expected: 1000 },
 ])('convert roman to arabic', ({ romanNumber, expected }) => {
   expect(toArabic(romanNumber)).toBe(expected);
