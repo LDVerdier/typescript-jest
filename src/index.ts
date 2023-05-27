@@ -1,4 +1,4 @@
-type AllowedRomanNumbers = 'I' | 'V' | 'X' | 'L' | 'C' | 'D';
+type AllowedRomanNumbers = 'I' | 'V' | 'X' | 'L' | 'C' | 'D' | 'M';
 const ROMAN_TO_ARABIC: Record<AllowedRomanNumbers, number> = {
   I: 1,
   V: 5,
@@ -6,6 +6,7 @@ const ROMAN_TO_ARABIC: Record<AllowedRomanNumbers, number> = {
   L: 50,
   C: 100,
   D: 500,
+  M: 1000,
 };
 
 export const toArabic = (romanNumber: string): number => {
