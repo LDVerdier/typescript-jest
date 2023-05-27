@@ -7,9 +7,22 @@ const ROMAN_TO_ARABIC: Record<AllowedRomanNumbers, number> = {
 export const toArabic = (romanNumber: string): number => {
   return romanNumber
     .split('')
-    .reduce((acc: number, letter: AllowedRomanNumbers) => {
-      const currentValue = ROMAN_TO_ARABIC[letter];
+    .reduce(
+      (
+        acc: number,
+        letter: AllowedRomanNumbers,
+        letterIndex: number,
+        letters: AllowedRomanNumbers[],
+      ) => {
+        const currentValue = ROMAN_TO_ARABIC[letter];
+        const nextLetter = letters[letterIndex + 1];
 
-      return acc + currentValue;
-    }, 0);
+        if (`${letter}${nextLetter}` === 'IV') {
+          return acc - currentValue;
+        }
+
+        return acc + currentValue;
+      },
+      0,
+    );
 };
