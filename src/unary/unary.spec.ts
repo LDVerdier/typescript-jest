@@ -2,6 +2,7 @@ import {
   splitBitsIntoIdenticalBitGroups,
   bitsToUnary,
   bitGroupToUnary,
+  charsToUnary,
 } from './unary';
 
 describe('identicalBitsToUnary', () => {
@@ -43,5 +44,14 @@ describe('bitsToUnary', () => {
     { value: '110001', expected: '0 00 00 000 0 0' },
   ])('should convert...', ({ value, expected }) => {
     expect(bitsToUnary(value)).toBe(expected);
+  });
+});
+
+describe('charsToUnary', () => {
+  it.each([
+    { value: 'C', expected: '0 0 00 0000 0 00' },
+    { value: 'CC', expected: '0 0 00 0000 0 000 00 0000 0 00' },
+  ])('should convert...', ({ value, expected }) => {
+    expect(charsToUnary(value)).toBe(expected);
   });
 });

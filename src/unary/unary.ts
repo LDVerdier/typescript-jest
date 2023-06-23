@@ -26,8 +26,21 @@ export const splitBitsIntoIdenticalBitGroups = (bits: string): string[] => {
   }, []);
 };
 
+const charsToBits = (chars: string): string => {
+  return chars
+    .split('')
+    .map((char) => char.charCodeAt(0).toString(2))
+    .join('');
+};
+
 export const bitsToUnary = (bits: string): string => {
   const bitGroups = splitBitsIntoIdenticalBitGroups(bits);
 
   return bitGroups.map((bitGroup) => bitGroupToUnary(bitGroup)).join(' ');
+};
+
+export const charsToUnary = (chars: string): string => {
+  const bits = charsToBits(chars);
+
+  return bitsToUnary(bits);
 };
