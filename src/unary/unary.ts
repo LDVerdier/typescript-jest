@@ -5,3 +5,9 @@ export const binaryToUnary = (binary: string): string => {
 
   return `${prefix} ${suffix}`;
 };
+
+export const binarsplitBinaryIntoHomogeneBlocksyToUnary = (
+  binary: string,
+): string[] => {
+  return [binary];
+};
