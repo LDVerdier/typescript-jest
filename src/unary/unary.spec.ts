@@ -1,7 +1,7 @@
 import {
   splitBitsIntoIdenticalBitGroups,
   bitsToUnary,
-  identicalBitsToUnary,
+  bitGroupToUnary,
 } from './unary';
 
 describe('identicalBitsToUnary', () => {
@@ -13,7 +13,7 @@ describe('identicalBitsToUnary', () => {
     { value: '00', expected: '00 00' },
     { value: '000', expected: '00 000' },
   ])('should convert...', ({ value, expected }) => {
-    expect(identicalBitsToUnary(value)).toBe(expected);
+    expect(bitGroupToUnary(value)).toBe(expected);
   });
 });
 

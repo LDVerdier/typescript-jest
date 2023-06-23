@@ -1,4 +1,4 @@
-export const identicalBitsToUnary = (identicalBits: string): string => {
+export const bitGroupToUnary = (identicalBits: string): string => {
   const prefix = identicalBits[0] === '1' ? '0' : '00';
 
   const suffix = '0'.repeat(identicalBits.length);
@@ -6,8 +6,8 @@ export const identicalBitsToUnary = (identicalBits: string): string => {
   return `${prefix} ${suffix}`;
 };
 
-export const splitBitsIntoIdenticalBitGroups = (binary: string): string[] => {
-  return binary.split('').reduce((arr: string[], currentBit: string) => {
+export const splitBitsIntoIdenticalBitGroups = (bits: string): string[] => {
+  return bits.split('').reduce((arr: string[], currentBit: string) => {
     if (arr.length === 0) {
       arr.push(currentBit);
 
@@ -17,18 +17,17 @@ export const splitBitsIntoIdenticalBitGroups = (binary: string): string[] => {
 
     if (lastStoredBit === currentBit) {
       arr[arr.length - 1] += currentBit;
-    } else {
-      arr.push(currentBit);
+
+      return arr;
     }
+    arr.push(currentBit);
 
     return arr;
   }, []);
 };
 
 export const bitsToUnary = (bits: string): string => {
-  const identicalBitGroups = splitBitsIntoIdenticalBitGroups(bits);
+  const bitGroups = splitBitsIntoIdenticalBitGroups(bits);
 
-  return identicalBitGroups
-    .map((bitGroup) => identicalBitsToUnary(bitGroup))
-    .join(' ');
+  return bitGroups.map((bitGroup) => bitGroupToUnary(bitGroup)).join(' ');
 };
