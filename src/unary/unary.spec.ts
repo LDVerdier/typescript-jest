@@ -4,6 +4,8 @@ describe('binaryToUnary', () => {
   it.each([
     { value: '1', expected: '0 0' },
     { value: '0', expected: '00 0' },
+    { value: '11', expected: '0 00' },
+    { value: '00', expected: '00 00' },
   ])('should convert...', ({ value, expected }) => {
     expect(binaryToUnary(value)).toBe(expected);
   });
