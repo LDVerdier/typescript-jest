@@ -38,11 +38,9 @@ describe('splitBitsIntoIdenticalBitGroups', () => {
 describe('bitsToUnary', () => {
   it.each([
     { value: '10', expected: '0 0 00 0' },
-    //   { value: '0', expected: '00 0' },
-    //   { value: '11', expected: '0 00' },
-    //   { value: '111', expected: '0 000' },
-    //   { value: '00', expected: '00 00' },
-    //   { value: '000', expected: '00 000' },
+    { value: '1100', expected: '0 00 00 00' },
+    { value: '11000', expected: '0 00 00 000' },
+    { value: '110001', expected: '0 00 00 000 0 0' },
   ])('should convert...', ({ value, expected }) => {
     expect(bitsToUnary(value)).toBe(expected);
   });

@@ -26,5 +26,9 @@ export const splitBitsIntoIdenticalBitGroups = (binary: string): string[] => {
 };
 
 export const bitsToUnary = (bits: string): string => {
-  return '';
+  const identicalBitGroups = splitBitsIntoIdenticalBitGroups(bits);
+
+  return identicalBitGroups
+    .map((bitGroup) => identicalBitsToUnary(bitGroup))
+    .join(' ');
 };
