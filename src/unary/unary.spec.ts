@@ -3,6 +3,7 @@ import {
   bitsToUnary,
   bitGroupToUnary,
   charsToUnary,
+  charsToSevenBits,
 } from './unary';
 
 describe('identicalBitsToUnary', () => {
@@ -51,7 +52,20 @@ describe('charsToUnary', () => {
   it.each([
     { value: 'C', expected: '0 0 00 0000 0 00' },
     { value: 'CC', expected: '0 0 00 0000 0 000 00 0000 0 00' },
+    { value: '%', expected: '00 0 0 0 00 00 0 0 00 0 0 0' },
+    { value: '0', expected: '00 0 0 00 00 0000' },
+    { value: ' ', expected: '00 0 0 0 00 00000' },
   ])('should convert...', ({ value, expected }) => {
     expect(charsToUnary(value)).toBe(expected);
+  });
+});
+
+describe('charsToSevenBits', () => {
+  it.each([
+    { value: 'C', expected: '1000011' },
+    { value: 'CC', expected: '10000111000011' },
+    { value: 'C C', expected: '100001101000001000011' },
+  ])('should convert...', ({ value, expected }) => {
+    expect(charsToSevenBits(value)).toBe(expected);
   });
 });

@@ -26,10 +26,10 @@ export const splitBitsIntoIdenticalBitGroups = (bits: string): string[] => {
   }, []);
 };
 
-const charsToBits = (chars: string): string => {
+export const charsToSevenBits = (chars: string): string => {
   return chars
     .split('')
-    .map((char) => char.charCodeAt(0).toString(2))
+    .map((char) => char.charCodeAt(0).toString(2).padStart(7, '0'))
     .join('');
 };
 
@@ -40,7 +40,7 @@ export const bitsToUnary = (bits: string): string => {
 };
 
 export const charsToUnary = (chars: string): string => {
-  const bits = charsToBits(chars);
+  const bits = charsToSevenBits(chars);
 
   return bitsToUnary(bits);
 };
