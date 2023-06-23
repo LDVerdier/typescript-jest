@@ -20,9 +20,14 @@ describe('splitBinaryIntoHomogeneBlocks', () => {
     { value: '1', expected: ['1'] },
     { value: '11', expected: ['11'] },
     { value: '00', expected: ['00'] },
+    { value: '10', expected: ['1', '0'] },
+    { value: '110', expected: ['11', '0'] },
+    { value: '1100', expected: ['11', '00'] },
+    { value: '11001', expected: ['11', '00', '1'] },
+    { value: '110011', expected: ['11', '00', '11'] },
   ])('should split', ({ value, expected }) => {
-    expect(binarsplitBinaryIntoHomogeneBlocksyToUnary(value)).toEqual(
-      expect.arrayContaining(expected),
+    expect(binarsplitBinaryIntoHomogeneBlocksyToUnary(value).join('')).toBe(
+      expected.join(''),
     );
   });
 });

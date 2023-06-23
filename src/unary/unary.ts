@@ -9,5 +9,20 @@ export const binaryToUnary = (binary: string): string => {
 export const binarsplitBinaryIntoHomogeneBlocksyToUnary = (
   binary: string,
 ): string[] => {
-  return [binary];
+  return binary.split('').reduce((arr: string[], currentBit: string) => {
+    if (arr.length === 0) {
+      arr.push(currentBit);
+
+      return arr;
+    }
+    const lastStoredBit = arr[arr.length - 1][0];
+
+    if (lastStoredBit === currentBit) {
+      arr[arr.length - 1] += currentBit;
+    } else {
+      arr.push(currentBit);
+    }
+
+    return arr;
+  }, []);
 };
