@@ -1,9 +1,6 @@
 import { extractValuesFromFile } from '../utils';
 import { resolve } from 'path';
 
-const extractIndexFromLine = (line: string): number => {
-  return +line.split(':')[0].split(' ')[1];
-};
 type Set = {
   red: number;
   green: number;
@@ -74,6 +71,37 @@ const isGameValid = (game: Game): boolean => {
   return !game.sets.some(isSetInvalid);
 };
 
+const getMinimumColorValues = ({ sets }: Game): Set => {
+  const { reds, greens, blues } = sets.reduce<{
+    reds: number[];
+    greens: number[];
+    blues: number[];
+  }>(
+    (acc, set) => {
+      acc.reds.push(set.red);
+      acc.greens.push(set.green);
+      acc.blues.push(set.blue);
+
+      return acc;
+    },
+    {
+      reds: [],
+      greens: [],
+      blues: [],
+    },
+  );
+
+  return {
+    red: Math.max(...reds),
+    green: Math.max(...greens),
+    blue: Math.max(...blues),
+  };
+};
+
+const getPower = ({ red, green, blue }: Set): number => {
+  return red * green * blue;
+};
+
 describe('toGame', () => {
   it('should...', () => {
     const line =
@@ -94,8 +122,9 @@ describe('first part', () => {
   it('should sum...', () => {
     const lines = extractValuesFromFile(resolve(__dirname, 'values.txt'));
     const sumOfValidGameIndexes = lines.reduce<number>((sum, line) => {
-      if (isGameValid(toGame(line))) {
-        sum += extractIndexFromLine(line);
+      const game = toGame(line);
+      if (isGameValid(game)) {
+        sum += game.index;
       }
       return sum;
     }, 0);
@@ -126,5 +155,19 @@ describe('first part', () => {
     },
   ])('should validate example inputs', ({ line, isValid }) => {
     expect(isGameValid(toGame(line))).toBe(isValid);
+  });
+});
+
+describe('second part', () => {
+  it('should', () => {
+    const lines = extractValuesFromFile(resolve(__dirname, 'values.txt'));
+    const sumOfPowers = lines.reduce<number>((acc, line) => {
+      const game = toGame(line);
+      const powerBase = getMinimumColorValues(game);
+      acc += getPower(powerBase);
+      return acc;
+    }, 0);
+
+    expect(sumOfPowers).toBe(72227);
   });
 });
