@@ -62,6 +62,15 @@ class NumberAtIndex {
   getValue(): number {
     return this.args.value;
   }
+
+  getAllIndexes(): number[] {
+    const indexes: number[] = [];
+    for (let i = this.getStartIndex(); i <= this.getEndIndex(); i++) {
+      indexes.push(i);
+    }
+
+    return indexes;
+  }
 }
 
 describe('NumberAtIndex', () => {
@@ -279,8 +288,12 @@ class NumberInGrid {
   }
 
   getSurroundingCoordinates(): Coordinate[] {
-    return [].concat(this.beforeAndAfterCoordinates());
+    return [
+      ...this.beforeAndAfterCoordinates(),
+      ...this.aboveAndBelowCoordinates(),
+    ];
   }
+
   beforeAndAfterCoordinates(): Coordinate[] {
     const coordinates: Coordinate[] = [];
     const lineLength = this.grid.lines[this.lineIndex].length;
@@ -300,6 +313,38 @@ class NumberInGrid {
     }
 
     return coordinates;
+  }
+
+  aboveAndBelowCoordinates(): Coordinate[] {
+    const coordinates: Coordinate[] = [];
+
+    if (this.isFirstLineOfTheGrid()) {
+      this.numberAtIndex.getAllIndexes().forEach((index) =>
+        coordinates.push({
+          lineIndex: this.lineIndex - 1,
+          columnIndex: index,
+        }),
+      );
+    }
+
+    if (this.isLastLineOfTheGrid()) {
+      this.numberAtIndex.getAllIndexes().forEach((index) =>
+        coordinates.push({
+          lineIndex: this.lineIndex + 1,
+          columnIndex: index,
+        }),
+      );
+    }
+
+    return coordinates;
+  }
+
+  private isFirstLineOfTheGrid(): boolean {
+    return this.lineIndex > 0;
+  }
+
+  private isLastLineOfTheGrid(): boolean {
+    return this.lineIndex < this.grid.lines.length - 1;
   }
 }
 
@@ -324,6 +369,28 @@ describe('NumberInGrid', () => {
         {
           lineIndex: 0,
           columnIndex: 1,
+        },
+      ],
+    },
+    {
+      numberAtIndex: NumberAtIndex.from({ value: 1, index: 0 }),
+      lineIndex: 1,
+      grid: Grid.from(['.', '1']),
+      expected: [
+        {
+          lineIndex: 0,
+          columnIndex: 0,
+        },
+      ],
+    },
+    {
+      numberAtIndex: NumberAtIndex.from({ value: 1, index: 0 }),
+      lineIndex: 0,
+      grid: Grid.from(['1', '.']),
+      expected: [
+        {
+          lineIndex: 1,
+          columnIndex: 0,
         },
       ],
     },
