@@ -82,7 +82,9 @@ describe('second part', () => {
         'twone2six',
         /(one|two|three|four|five|six|seven|eight|nine|[0-9])/g,
       ),
-    ).map((numberAtIndex) => numberAtIndex.toIntString());
+    )
+      .map((numberAtIndex) => numberAtIndex.toIntString())
+      .join('');
     expect(result).toBe('2126');
   });
 
