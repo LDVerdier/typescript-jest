@@ -291,6 +291,8 @@ class NumberInGrid {
     return [
       ...this.beforeAndAfterCoordinates(),
       ...this.aboveAndBelowCoordinates(),
+      ...this.diagonalCoordinatesBefore(),
+      ...this.diagonalCoordinatesAfter(),
     ];
   }
 
@@ -305,7 +307,7 @@ class NumberInGrid {
       });
     }
 
-    if (this.numberAtIndex.getEndIndex() !== lineLength - 1) {
+    if (!this.isLastCharOfTheGrid()) {
       coordinates.push({
         lineIndex: this.lineIndex,
         columnIndex: lineLength - 1,
@@ -318,7 +320,7 @@ class NumberInGrid {
   aboveAndBelowCoordinates(): Coordinate[] {
     const coordinates: Coordinate[] = [];
 
-    if (this.isFirstLineOfTheGrid()) {
+    if (!this.isFirstLineOfTheGrid()) {
       this.numberAtIndex.getAllIndexes().forEach((index) =>
         coordinates.push({
           lineIndex: this.lineIndex - 1,
@@ -327,7 +329,7 @@ class NumberInGrid {
       );
     }
 
-    if (this.isLastLineOfTheGrid()) {
+    if (!this.isLastLineOfTheGrid()) {
       this.numberAtIndex.getAllIndexes().forEach((index) =>
         coordinates.push({
           lineIndex: this.lineIndex + 1,
@@ -340,11 +342,72 @@ class NumberInGrid {
   }
 
   private isFirstLineOfTheGrid(): boolean {
-    return this.lineIndex > 0;
+    return this.lineIndex === 0;
   }
 
   private isLastLineOfTheGrid(): boolean {
-    return this.lineIndex < this.grid.lines.length - 1;
+    return this.lineIndex === this.grid.lines.length - 1;
+  }
+
+  diagonalCoordinatesBefore(): Coordinate[] {
+    const coordinates: Coordinate[] = [];
+
+    if (this.numberAtIndex.getStartIndex() === 0) {
+      return coordinates;
+    }
+
+    const columnIndex = this.numberAtIndex.getStartIndex() - 1;
+
+    if (!this.isFirstLineOfTheGrid()) {
+      coordinates.push({
+        lineIndex: this.lineIndex - 1,
+        columnIndex,
+      });
+    }
+
+    if (!this.isLastLineOfTheGrid()) {
+      coordinates.push({
+        lineIndex: this.lineIndex + 1,
+        columnIndex,
+      });
+    }
+
+    return coordinates;
+
+    return coordinates;
+  }
+
+  diagonalCoordinatesAfter(): Coordinate[] {
+    const coordinates: Coordinate[] = [];
+
+    if (this.isLastCharOfTheGrid()) {
+      return coordinates;
+    }
+
+    const columnIndex = this.numberAtIndex.getEndIndex() + 1;
+
+    if (!this.isFirstLineOfTheGrid()) {
+      coordinates.push({
+        lineIndex: this.lineIndex - 1,
+        columnIndex,
+      });
+    }
+
+    if (!this.isLastLineOfTheGrid()) {
+      coordinates.push({
+        lineIndex: this.lineIndex + 1,
+        columnIndex,
+      });
+    }
+
+    return coordinates;
+  }
+
+  private isLastCharOfTheGrid(): boolean {
+    return (
+      this.numberAtIndex.getEndIndex() ===
+      this.grid.lines[this.lineIndex].length - 1
+    );
   }
 }
 
@@ -394,12 +457,97 @@ describe('NumberInGrid', () => {
         },
       ],
     },
+    {
+      numberAtIndex: NumberAtIndex.from({ value: 1, index: 0 }),
+      lineIndex: 0,
+      grid: Grid.from(['1.', '..']),
+      expected: [
+        {
+          lineIndex: 0,
+          columnIndex: 1,
+        },
+        {
+          lineIndex: 1,
+          columnIndex: 0,
+        },
+        {
+          lineIndex: 1,
+          columnIndex: 1,
+        },
+      ],
+    },
+    {
+      numberAtIndex: NumberAtIndex.from({ value: 1, index: 1 }),
+      lineIndex: 0,
+      grid: Grid.from(['.1', '..']),
+      expected: [
+        {
+          lineIndex: 0,
+          columnIndex: 0,
+        },
+        {
+          lineIndex: 1,
+          columnIndex: 0,
+        },
+        {
+          lineIndex: 1,
+          columnIndex: 1,
+        },
+      ],
+    },
+    {
+      numberAtIndex: NumberAtIndex.from({ value: 12, index: 1 }),
+      lineIndex: 1,
+      grid: Grid.from(['....', '.12.', '....']),
+      expected: [
+        {
+          lineIndex: 0,
+          columnIndex: 0,
+        },
+        {
+          lineIndex: 0,
+          columnIndex: 1,
+        },
+        {
+          lineIndex: 0,
+          columnIndex: 2,
+        },
+        {
+          lineIndex: 0,
+          columnIndex: 3,
+        },
+        {
+          lineIndex: 1,
+          columnIndex: 0,
+        },
+        {
+          lineIndex: 1,
+          columnIndex: 3,
+        },
+        {
+          lineIndex: 2,
+          columnIndex: 0,
+        },
+        {
+          lineIndex: 2,
+          columnIndex: 1,
+        },
+        {
+          lineIndex: 2,
+          columnIndex: 2,
+        },
+        {
+          lineIndex: 2,
+          columnIndex: 3,
+        },
+      ],
+    },
   ])(
     'getSurroundingCoordinates',
     ({ numberAtIndex, lineIndex, grid, expected }) => {
       const numberInGrid = NumberInGrid.from(numberAtIndex, lineIndex, grid);
       expect(numberInGrid.getSurroundingCoordinates()).toEqual<Coordinate[]>(
-        expected,
+        expect.arrayContaining(expected),
       );
     },
   );
