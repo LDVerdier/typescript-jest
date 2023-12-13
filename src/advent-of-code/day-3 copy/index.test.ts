@@ -58,6 +58,10 @@ class NumberAtIndex {
   getEndIndex(): number {
     return this.args.index + this.args.value.toString().length - 1;
   }
+
+  getValue(): number {
+    return this.args.value;
+  }
 }
 
 describe('NumberAtIndex', () => {
@@ -196,5 +200,54 @@ describe('determine if number is a part number', () => {
     const numberAtIndex = line.getNumbersAtIndexes()[0];
 
     expect(line.isPartNumber(numberAtIndex)).toBe(expected);
+  });
+});
+
+class Grid {
+  constructor(private readonly lines: string[]) {}
+
+  static from(lines: string[]): Grid {
+    return new Grid(lines);
+  }
+
+  getSumOfPartNumbers(): number {
+    return this.lines
+      .map((lineInput) => Line.from(lineInput))
+      .reduce<number>((sum, currentLine) => {
+        const currentLineSum = currentLine
+          .getNumbersAtIndexes()
+          .filter((numberAtIndex) => currentLine.isPartNumber(numberAtIndex))
+          .reduce<number>((lineSum, currentNumber) => {
+            return lineSum + currentNumber.getValue();
+          }, 0);
+        return sum + currentLineSum;
+      }, 0);
+  }
+}
+
+describe('Grid', () => {
+  it.each<{
+    linesInput: string[];
+    expected: number;
+  }>([
+    {
+      linesInput: ['*1..*......'],
+      expected: 1,
+    },
+    {
+      linesInput: ['*1..*..1...'],
+      expected: 1,
+    },
+    {
+      linesInput: ['*1..*..1*..'],
+      expected: 2,
+    },
+    {
+      linesInput: ['*12.*.21*..'],
+      expected: 33,
+    },
+  ])('is a part number', ({ linesInput, expected }) => {
+    const grid = Grid.from(linesInput);
+    expect(grid.getSumOfPartNumbers()).toBe(expected);
   });
 });
