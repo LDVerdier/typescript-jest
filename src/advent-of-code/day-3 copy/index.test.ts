@@ -204,7 +204,7 @@ describe('determine if number is a part number', () => {
 });
 
 class Grid {
-  constructor(private readonly lines: string[]) {}
+  constructor(readonly lines: string[]) {}
 
   static from(lines: string[]): Grid {
     return new Grid(lines);
@@ -246,8 +246,94 @@ describe('Grid', () => {
       linesInput: ['*12.*.21*..'],
       expected: 33,
     },
+    // {
+    //   linesInput: [
+    //     '1..................................................',
+    //     '*..................................................',
+    //   ],
+    //   expected: 1,
+    // },
   ])('is a part number', ({ linesInput, expected }) => {
     const grid = Grid.from(linesInput);
     expect(grid.getSumOfPartNumbers()).toBe(expected);
   });
+});
+
+type Coordinate = {
+  lineIndex: number;
+  columnIndex: number;
+};
+class NumberInGrid {
+  constructor(
+    private readonly numberAtIndex: NumberAtIndex,
+    private readonly lineIndex: number,
+    private readonly grid: Grid,
+  ) {}
+
+  static from(
+    numberAtIndex: NumberAtIndex,
+    lineIndex: number,
+    grid: Grid,
+  ): NumberInGrid {
+    return new NumberInGrid(numberAtIndex, lineIndex, grid);
+  }
+
+  getSurroundingCoordinates(): Coordinate[] {
+    return [].concat(this.beforeAndAfterCoordinates());
+  }
+  beforeAndAfterCoordinates(): Coordinate[] {
+    const coordinates: Coordinate[] = [];
+    const lineLength = this.grid.lines[this.lineIndex].length;
+
+    if (!this.numberAtIndex.isStartOfLine()) {
+      coordinates.push({
+        lineIndex: this.lineIndex,
+        columnIndex: this.numberAtIndex.getStartIndex() - 1,
+      });
+    }
+
+    if (this.numberAtIndex.getEndIndex() !== lineLength - 1) {
+      coordinates.push({
+        lineIndex: this.lineIndex,
+        columnIndex: lineLength - 1,
+      });
+    }
+
+    return coordinates;
+  }
+}
+
+describe('NumberInGrid', () => {
+  it.each<{
+    numberAtIndex: NumberAtIndex;
+    lineIndex: number;
+    grid: Grid;
+    expected: Coordinate[];
+  }>([
+    {
+      numberAtIndex: NumberAtIndex.from({ value: 1, index: 0 }),
+      lineIndex: 0,
+      grid: Grid.from(['1']),
+      expected: [],
+    },
+    {
+      numberAtIndex: NumberAtIndex.from({ value: 1, index: 0 }),
+      lineIndex: 0,
+      grid: Grid.from(['1.']),
+      expected: [
+        {
+          lineIndex: 0,
+          columnIndex: 1,
+        },
+      ],
+    },
+  ])(
+    'getSurroundingCoordinates',
+    ({ numberAtIndex, lineIndex, grid, expected }) => {
+      const numberInGrid = NumberInGrid.from(numberAtIndex, lineIndex, grid);
+      expect(numberInGrid.getSurroundingCoordinates()).toEqual<Coordinate[]>(
+        expected,
+      );
+    },
+  );
 });
