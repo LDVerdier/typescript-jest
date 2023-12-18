@@ -1,3 +1,6 @@
+import { extractValuesFromFile } from '../utils';
+import { resolve } from 'path';
+
 class Char {
   constructor(private readonly char: string) {
     if (char.length !== 1) {
@@ -579,4 +582,36 @@ describe('NumberInGrid', () => {
       expect(numberInGrid.isPartNumber()).toBe(expected);
     },
   );
+});
+
+describe('final result', () => {
+  it('should compute result', () => {
+    const lines = extractValuesFromFile(resolve(__dirname, 'values.txt'));
+    const grid = Grid.from(lines);
+
+    const result = lines.reduce<number>(
+      (sum, currentLine, currentLineIndex) => {
+        const numbersAtIndexes = Line.from(currentLine).getNumbersAtIndexes();
+        const sumOfCurrentLine = numbersAtIndexes.reduce<number>(
+          (lineSum, numberAtIndex) => {
+            const numberInGrid = NumberInGrid.from(
+              numberAtIndex,
+              currentLineIndex,
+              grid,
+            );
+            if (numberInGrid.isPartNumber()) {
+              return lineSum + numberAtIndex.getValue();
+            }
+            return lineSum;
+          },
+          0,
+        );
+
+        return sum + sumOfCurrentLine;
+      },
+      0,
+    );
+
+    expect(result).toBe(550934);
+  });
 });
