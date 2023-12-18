@@ -232,6 +232,10 @@ class Grid {
         return sum + currentLineSum;
       }, 0);
   }
+
+  charAt({ lineIndex, columnIndex }: Coordinate): Char {
+    return Char.from(this.lines[lineIndex][columnIndex]);
+  }
 }
 
 describe('Grid', () => {
@@ -287,6 +291,16 @@ class NumberInGrid {
     return new NumberInGrid(numberAtIndex, lineIndex, grid);
   }
 
+  isPartNumber(): boolean {
+    const surroundingCoordinates = this.getSurroundingCoordinates();
+
+    return surroundingCoordinates.some((coordinate) => {
+      const char = this.grid.charAt(coordinate);
+
+      return char.isSpecialChar();
+    });
+  }
+
   getSurroundingCoordinates(): Coordinate[] {
     return [
       ...this.beforeAndAfterCoordinates(),
@@ -298,7 +312,6 @@ class NumberInGrid {
 
   beforeAndAfterCoordinates(): Coordinate[] {
     const coordinates: Coordinate[] = [];
-    const lineLength = this.grid.lines[this.lineIndex].length;
 
     if (!this.numberAtIndex.isStartOfLine()) {
       coordinates.push({
@@ -307,10 +320,10 @@ class NumberInGrid {
       });
     }
 
-    if (!this.isLastCharOfTheGrid()) {
+    if (!this.isLastCharOfTheLine()) {
       coordinates.push({
         lineIndex: this.lineIndex,
-        columnIndex: lineLength - 1,
+        columnIndex: this.numberAtIndex.getEndIndex() + 1,
       });
     }
 
@@ -373,14 +386,12 @@ class NumberInGrid {
     }
 
     return coordinates;
-
-    return coordinates;
   }
 
   diagonalCoordinatesAfter(): Coordinate[] {
     const coordinates: Coordinate[] = [];
 
-    if (this.isLastCharOfTheGrid()) {
+    if (this.isLastCharOfTheLine()) {
       return coordinates;
     }
 
@@ -403,7 +414,7 @@ class NumberInGrid {
     return coordinates;
   }
 
-  private isLastCharOfTheGrid(): boolean {
+  private isLastCharOfTheLine(): boolean {
     return (
       this.numberAtIndex.getEndIndex() ===
       this.grid.lines[this.lineIndex].length - 1
@@ -549,6 +560,23 @@ describe('NumberInGrid', () => {
       expect(numberInGrid.getSurroundingCoordinates()).toEqual<Coordinate[]>(
         expect.arrayContaining(expected),
       );
+    },
+  );
+
+  it.each([
+    { grid: Grid.from(['.....', '.12..', '.....']), expected: false },
+    { grid: Grid.from(['.....', '*12..', '.....']), expected: true },
+    { grid: Grid.from(['.....', '.12*.', '.....']), expected: true },
+    { grid: Grid.from(['.....', '.12.*', '.....']), expected: false },
+    { grid: Grid.from(['....*', '.12..', '....*']), expected: false },
+    { grid: Grid.from(['.*...', '.12..', '.....']), expected: true },
+  ])(
+    'should determine if number in grid is a part number',
+    ({ grid, expected }) => {
+      const numberAtIndex = NumberAtIndex.from({ index: 1, value: 12 });
+      const lineIndex = 1;
+      const numberInGrid = NumberInGrid.from(numberAtIndex, lineIndex, grid);
+      expect(numberInGrid.isPartNumber()).toBe(expected);
     },
   );
 });
